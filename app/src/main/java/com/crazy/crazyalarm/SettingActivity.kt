@@ -34,12 +34,12 @@ class SettingActivity : AppCompatActivity() {
         binding.spinner.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
                 var modeCode = when (pos) {
-                    0 -> 11
-                    1 -> 12
-                    2 -> 0
-                    3 -> 1
-                    4 -> 2
-                    5 -> 3
+                    0 -> 0
+                    1 -> 1
+                    2 -> 2
+                    3 -> 3
+                    4 -> 11
+                    5 -> 12
                     6 -> 6
                     7 -> 8
                     8 -> 31
