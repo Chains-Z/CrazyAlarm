@@ -25,6 +25,8 @@ object AlarmManagerUtil {
     const val PARENTID = "parentid"
     const val MODE = "mode"
     const val SETTING = "setting"
+    const val HOUR = "hour"
+    const val MINUTE = "minute"
     const val DayInMillis: Long = 86400000L
     const val WeekInMillis: Long = 604800000L
     val rand = Random()
@@ -42,6 +44,11 @@ object AlarmManagerUtil {
     fun cancelAlarm(context: Context, pid: Int) {
         val intent = Intent(ALARM_ACTION)
         val idList = getChildOf(context, pid)
+        val p = PendingIntent.getBroadcast(
+            context, pid,
+            intent, PendingIntent.FLAG_CANCEL_CURRENT)
+        val am: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        am.cancel(p)
         for(id in idList){
             val pi: PendingIntent = PendingIntent.getBroadcast(
                 context, id,
@@ -104,11 +111,14 @@ object AlarmManagerUtil {
         intent.putExtra(INTERVALLMILLIS, intervalMillis)
         intent.putExtra(MSG, prompt)
         intent.putExtra(ID, id)
+        intent.putExtra(HOUR, hour)
+        intent.putExtra(MINUTE, minute)
         intent.putExtra(PARENTID, parentID)
         intent.putExtra(NOTICEFLAG, noticeFlag)
         intent.putExtra(MODE, mode)
         intent.putExtra(REPEAT, repeat)
         intent.setPackage(context.packageName)
+        insertId(context, id)
         val sender = PendingIntent.getBroadcast(
             context, id,
             intent, PendingIntent.FLAG_CANCEL_CURRENT
@@ -217,6 +227,8 @@ object AlarmManagerUtil {
         var ParentIDList = mutableListOf<Int>()
         val intent = Intent(ALARM_ACTION)
         (idarr)?.forEach { id ->
+            if (id == "")
+                return@forEach
             val broadcast = PendingIntent.getBroadcast(
                 context, id.toInt(),
                 intent, PendingIntent.FLAG_CANCEL_CURRENT

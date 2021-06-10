@@ -5,13 +5,14 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.crazy.crazyalarm.clockUtils.AlarmManagerUtil
-import com.crazy.crazyalarm.clockUtils.ClockItem
+import com.crazy.crazyalarm.clockUtils.Clock
+import com.crazy.crazyalarm.clockUtils.ClockAdapter
 import com.crazy.crazyalarm.clockUtils.Configuration
 import com.crazy.crazyalarm.databinding.ActivityMainBinding
-import java.time.Clock
 import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
@@ -20,15 +21,29 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         loadConfiguration()
-        var list = mutableListOf<Clock>()
-        val calendar = Calendar.getInstance()
         binding.fab.setOnClickListener {
             val intent = Intent(this, SetClockActivity::class.java)
             startActivity(intent)
         }
+        setClockList()
     }
 
-    fun loadConfiguration() {
+    override fun onRestart() {
+        super.onRestart()
+        setClockList()
+    }
+    private fun setClockList(){
+        val idList =  AlarmManagerUtil.getAllParentID(this)
+        val clockList = ArrayList<Clock>()
+        for (id in idList){
+            clockList.add(Clock(this,id))
+        }
+        val layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.layoutManager = layoutManager
+        val adapter = ClockAdapter(clockList)
+        binding.recyclerView.adapter = adapter
+    }
+    private fun loadConfiguration() {
         val SETTING = "setting"
         val MATH_CODE = "mathCode"
         val SCAN_STRING = "scanString"
