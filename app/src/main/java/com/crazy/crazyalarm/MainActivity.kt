@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
         setClockList()
-        //nothing2
+        //nothing
     }
 
     override fun onRestart() {
